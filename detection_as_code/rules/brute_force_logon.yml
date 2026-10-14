@@ -1,0 +1,34 @@
+id: win-brute-force-logon
+title: Brute Force Logon Attempts (Failed Windows Logons)
+severity: high
+description: >-
+  Flags failed Windows logon events (Security 4625) that indicate password
+  guessing, excluding machine-account churn.
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    event_id: 4625
+  filter_machine_account:
+    account_name|re: '\$$'   # machine accounts end with "$"
+  condition: selection and not filter_machine_account
+mitre:
+  tactic: Credential Access
+  technique: T1110
+false_positives:
+  - A user repeatedly mistyping their password.
+  - A service account running with a stale cached credential.
+# ponytail: single-event rule. Real brute-force needs a count/threshold over a
+# time window, which the matcher deliberately does not do. Thresholding is the
+# SIEM's job; this rule flags the individual failure to be counted upstream.
+tests:
+  - name: failed interactive logon matches
+    event: {event_id: 4625, account_name: jsmith, logon_type: 2}
+    should_match: true
+  - name: successful logon does not match
+    event: {event_id: 4624, account_name: jsmith}
+    should_match: false
+  - name: machine-account failure is filtered out
+    event: {event_id: 4625, account_name: WORKSTATION$}
+    should_match: false

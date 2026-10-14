@@ -1,0 +1,35 @@
+id: net-data-exfil-cloud
+title: Potential Data Exfiltration to Personal File-Sharing
+severity: medium
+description: >-
+  Flags outbound web traffic to personal file-sharing / paste services often
+  abused to move data out of the environment.
+logsource:
+  product: proxy
+  service: web
+detection:
+  selection:
+    direction: outbound
+    dest_domain|in:
+      - mega.nz
+      - anonfiles.com
+      - transfer.sh
+      - pastebin.com
+  condition: selection
+mitre:
+  tactic: Exfiltration
+  technique: T1567.002
+false_positives:
+  - Teams using an approved file-transfer service for legitimate large transfers.
+# ponytail: pure destination match on a single flow. No data-volume threshold and
+# no baseline of normal upload size (those need aggregation the matcher omits).
+tests:
+  - name: outbound upload to pastebin matches
+    event: {direction: outbound, dest_domain: pastebin.com, bytes_out: 50000}
+    should_match: true
+  - name: inbound traffic does not match
+    event: {direction: inbound, dest_domain: pastebin.com}
+    should_match: false
+  - name: ordinary site does not match
+    event: {direction: outbound, dest_domain: example.com}
+    should_match: false

@@ -1,0 +1,15 @@
+[
+  {"event_id": 4625, "account_name": "jsmith", "logon_type": 3, "src_ip": "10.0.0.14"},
+  {"event_id": 4624, "account_name": "jsmith", "logon_type": 2, "src_ip": "10.0.0.14"},
+  {"event_id": 4625, "account_name": "WORKSTATION$", "logon_type": 3},
+  {"image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+   "command_line": "powershell.exe -EncodedCommand SQBFAFgAIAAoAE4A"},
+  {"image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+   "command_line": "powershell.exe Get-ChildItem C:\\Users"},
+  {"event_type": "user.authentication.sso", "anomaly": "impossible_travel", "user": "alice", "country": "DE"},
+  {"event_type": "user.authentication.sso", "anomaly": "", "user": "alice", "country": "AE"},
+  {"event_id": 4728, "group_name": "Domain Admins", "target_user": "contractor01"},
+  {"event_id": 4728, "group_name": "Sales", "target_user": "newhire02"},
+  {"direction": "outbound", "dest_domain": "transfer.sh", "bytes_out": 734003200, "user": "bob"},
+  {"direction": "outbound", "dest_domain": "github.com", "bytes_out": 12000, "user": "bob"}
+]

@@ -1,0 +1,5 @@
+# Runtime
+PyYAML>=6,<7
+
+# Dev / test (offline gate)
+pytest>=7,<10

@@ -1,0 +1,41 @@
+id: win-suspicious-powershell
+title: Suspicious PowerShell Execution
+severity: high
+description: >-
+  Detects PowerShell launched with encoding or download-cradle flags commonly
+  used to run obfuscated payloads in memory.
+logsource:
+  product: windows
+  service: sysmon
+detection:
+  selection_proc:
+    image|contains: powershell
+  selection_flags:
+    command_line|contains:
+      - -enc
+      - -EncodedCommand
+      - DownloadString
+      - FromBase64String
+      - IEX
+  condition: selection_proc and selection_flags
+mitre:
+  tactic: Execution
+  technique: T1059.001
+false_positives:
+  - Administrative automation that legitimately base64-encodes its arguments.
+tests:
+  - name: encoded powershell command matches
+    event:
+      image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      command_line: powershell.exe -enc SQBFAFgA
+    should_match: true
+  - name: plain powershell does not match
+    event:
+      image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      command_line: powershell.exe Get-Process
+    should_match: false
+  - name: encoded flag in a non-powershell process does not match
+    event:
+      image: C:\Windows\System32\cmd.exe
+      command_line: cmd.exe -enc something
+    should_match: false

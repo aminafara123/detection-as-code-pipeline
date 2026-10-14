@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "detection-as-code-pipeline"
+version = "0.1.0"
+description = "Detection-as-code for security: write SIEM detection rules as versioned YAML, lint them, unit-test them against sample events, and run it all as a CI gate. Maps rules to MITRE ATT&CK."
+authors = [{name = "Al Amin Bashir Afara", email = "aminafara123@gmail.com"}]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+dependencies = ["PyYAML>=6,<7"]
+
+[project.scripts]
+detection-as-code = "detection_as_code.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+# Bundled rules/ and sample_events.json live inside the package, so hatchling
+# ships them automatically and Path(__file__).parent finds them once installed.
+packages = ["detection_as_code"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

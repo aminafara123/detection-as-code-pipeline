@@ -1,0 +1,33 @@
+id: win-new-admin-account
+title: User Added to a Privileged Group
+severity: high
+description: >-
+  Detects an account being added to a privileged/administrative group
+  (Security 4728 / 4732 / 4756), a common persistence step.
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    event_id|in: [4728, 4732, 4756]
+    group_name|contains:
+      - Admins
+      - Administrators
+      - Domain Admins
+      - Enterprise Admins
+  condition: selection
+mitre:
+  tactic: Persistence
+  technique: T1098
+false_positives:
+  - Planned onboarding of a new administrator (a change ticket should exist).
+tests:
+  - name: added to Domain Admins matches
+    event: {event_id: 4728, group_name: Domain Admins, target_user: bob}
+    should_match: true
+  - name: added to a normal group does not match
+    event: {event_id: 4728, group_name: Sales, target_user: bob}
+    should_match: false
+  - name: unrelated event id does not match
+    event: {event_id: 4624, group_name: Domain Admins}
+    should_match: false

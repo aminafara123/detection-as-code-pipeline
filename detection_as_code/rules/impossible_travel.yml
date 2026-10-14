@@ -1,0 +1,36 @@
+id: auth-impossible-travel
+title: Impossible Travel (Geo-Velocity Anomaly)
+severity: medium
+description: >-
+  Matches SSO login events already enriched with an "impossible_travel" anomaly
+  flag by an upstream UEBA / geo-velocity step.
+logsource:
+  product: okta
+  service: authentication
+detection:
+  selection:
+    event_type: user.authentication.sso
+    anomaly|contains: impossible_travel
+  condition: selection
+mitre:
+  tactic: Initial Access
+  technique: T1078
+false_positives:
+  - Corporate VPN exit nodes located in another country.
+  - Mobile users roaming across a nearby border.
+# ponytail: the geo-velocity correlation itself (two logins, distance over time)
+# is upstream enrichment, not something the single-event matcher computes. This
+# rule matches the enriched signal, which is realistic for modern SIEM/UEBA.
+tests:
+  - name: enriched impossible-travel login matches
+    event:
+      event_type: user.authentication.sso
+      anomaly: impossible_travel,new_device
+      user: alice
+    should_match: true
+  - name: clean login does not match
+    event:
+      event_type: user.authentication.sso
+      anomaly: ""
+      user: alice
+    should_match: false
